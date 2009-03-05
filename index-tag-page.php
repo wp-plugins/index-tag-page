@@ -3,7 +3,7 @@
 	Plugin Name: Index Tag Page 
 	Plugin URI: http://www.kune.fr 
 	Description: Plugin for displaying tag link index 
-	Author: Mat_ (Mathieu BASILI)
+	Author: Mat_
 	Version: 1.0 
 	Author URI: http://www.kune-studio.com 
 	*/  
