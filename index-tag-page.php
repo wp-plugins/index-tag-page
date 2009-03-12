@@ -10,13 +10,14 @@
 ?>
 
 <?php 
-function tagIndex_init($atts) {
-	function tagIndexDisplay_function($atts) {
+function tagIndexPage_init($atts) {
+	function tagIndexPageDisplay_function($atts) {
 		extract(shortcode_atts(array(
 			'nb' => '',
 			'ul' => 'itpUl',
 			'li' => 'itpLi',
-			'letter' => 'itpLetter'
+			'letter' => 'itpLetter',
+			'menu' => true
 		), $atts));
 		if($nb != '') $nb = "number=$nb&";
 		$tag = wp_tag_cloud($nb.'format=array&smallest=8&largest=8' );
@@ -47,31 +48,36 @@ function tagIndex_init($atts) {
 				$start = $letag[1][0];
 				$alpha[$i] = $start;
 				$i ++;
-				$ret .= $start;
-				
+				$ret .= "<span ".$letter.">".$start."</span>";
+
 				 
 				
-				$ret .= "<ul>";
+				$ret .= "<ul $ul>";
 				$ret .= "<li>$untag</li>";
 			}
 		}
 		
 		if($menu){
-			$retMenu = "<ul id=\"iapAlpha\">\n";
+			$retMenu = "<ul id=\"itpAlpha\">\n";
 			foreach($alpha as $alphabet){
-				$retMenu .= "\t<li><a href=\"#iap".$alphabet."\">".$alphabet."</a></li>\n";
+				$retMenu .= "\t<li><a href=\"#itp".$alphabet."\">".$alphabet."</a></li>\n";
 			}
 			$retMenu .= "</ul>";
 		}
 		$ret .= "</div>";
 		$retMenu .= $ret;
-		$retMenu .= '<div id="index-authors-page">';
+		$retMenu .= '<div id="index-tag-page">';
 
 		return $retMenu;
 	} 
 	
-	add_shortcode('indextag', 'tagIndexDisplay_function');
+	add_shortcode('indextag', 'tagIndexPageDisplay_function');
 }
-add_action('plugins_loaded', 'tagIndex_init');
+function tagsiindexpage_insert_css()
+{
+echo '<link rel="stylesheet" href="'.get_option('siteurl').'/wp-content/plugins/index-tag-page/tagindex.css" type="text/css" media="screen" />'."\n";
+}
+add_action('wp_head', 'tagsiindexpage_insert_css');
+add_action('plugins_loaded', 'tagIndexPage_init');
 
 ?>
