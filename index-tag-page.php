@@ -4,7 +4,7 @@
 	Plugin URI: http://www.kune.fr 
 	Description: Plugin for displaying tag link index 
 	Author: Mat_
-	Version: 1.1 
+	Version: 1.2 
 	Author URI: http://www.kune-studio.com 
 	*/  
 ?>
@@ -14,20 +14,18 @@ function tagIndex_init($atts) {
 	function tagIndexDisplay_function($atts) {
 		extract(shortcode_atts(array(
 			'nb' => '',
-			'ul' => '',
-			'li' => '',
-			'letter' => ''
+			'ul' => 'itpUl',
+			'li' => 'itpLi',
+			'letter' => 'itpLetter'
 		), $atts));
 		if($nb != '') $nb = "number=$nb&";
 		$tag = wp_tag_cloud($nb.'format=array&smallest=8&largest=8' );
 		$start = "0";
 		$ret = "";
-		if($ul != '') $ul = " class=\"$ul\" ";
-		else $ul = " class=\"itpUl\" ";
-		
-		if($li != '') $li = " class=\"$li\" ";
-		else $li = " class=\"itpLi\" ";
-		
+		$ul = " class=\"$ul\" ";
+		$li = " class=\"$li\" ";
+		$alpha = array();
+		$i = 0;
 		foreach($tag as $untag){
 			
 			ereg(">([A-Za-z0-9\.|-|_éàèêç ]*)</a>",$untag, $letag);
@@ -36,8 +34,9 @@ function tagIndex_init($atts) {
 
 			if($start == "0"){
 				$start = $letag[1][0];
-				if($letter != '') $letter = " class=\"$letter itp".$start." \" ";
-				else $letter = " class=\"itpLetter itp".$start." \" ";
+				$alpha[$i] = $start;
+				$i ++;
+				$letter = " class=\"$letter itp".$start." \" ";
 				$ret .= "<span ".$letter.">".$start."</span>";
 				$ret .= "<ul $ul>";
 			}
@@ -46,6 +45,8 @@ function tagIndex_init($atts) {
 			else{
 				$ret .= "</ul>";
 				$start = $letag[1][0];
+				$alpha[$i] = $start;
+				$i ++;
 				$ret .= $start;
 				
 				 
@@ -55,7 +56,18 @@ function tagIndex_init($atts) {
 			}
 		}
 		
-		return $ret;
+		if($menu){
+			$retMenu = "<ul id=\"iapAlpha\">\n";
+			foreach($alpha as $alphabet){
+				$retMenu .= "\t<li><a href=\"#iap".$alphabet."\">".$alphabet."</a></li>\n";
+			}
+			$retMenu .= "</ul>";
+		}
+		$ret .= "</div>";
+		$retMenu .= $ret;
+		$retMenu .= '<div id="index-authors-page">';
+
+		return $retMenu;
 	} 
 	
 	add_shortcode('indextag', 'tagIndexDisplay_function');
